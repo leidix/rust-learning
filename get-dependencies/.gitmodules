@@ -1,0 +1,5 @@
+[submodule "get-dependencies"]
+	path = get-dependencies
+	url = /home/fel04687/Development/repos/rust-book/get-dependencies
+[submodule "rustlings"]
+	branch = master

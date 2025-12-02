@@ -1,6 +1,6 @@
 # rust-book
 
-This repository contains my notes and exercises from reading ["The Rust Programming Language"](https://rust-book.cs.brown.edu) book, commonly referred to as "The Rust Book". Moreover, it includes [rustlings](https://rustlings.rust-lang.org/) exercises to help reinforce my understanding of Rust concepts.
+This repository contains my notes and exercises from reading "[The Rust Programming Language]"(https://rust-book.cs.brown.edu) book, commonly referred to as "The Rust Book". Moreover, it includes [rustlings](https://rustlings.rust-lang.org/) exercises to help reinforce my understanding of Rust concepts.
 
 ## Reproducing this Repository
 
@@ -26,15 +26,19 @@ sudo apt-get install build-essential
     ```bash
     cd rust-book
     ```
-3. **Install dependencies:**
+3. **Fetch dependencies:**
     ```bash
     cargo fetch
     ```
-3.  **Build all projects:**
+4. Install project:
     ```bash
-    cargo build
+    cargo install --path .
     ```
-4.  **Run a specific project:**
+5.  **Build and run:**
+    ```bash
+    cargo run
+    ```
+6.  **Run a specific project:**
     ```bash
     cargo run --bin <project_name>
     ```

@@ -14,10 +14,12 @@ To get started with this project, you'll need to have [Rust](https://www.rust-la
 
 2.  **Build all projects:**
 
-    This project is a Cargo workspace, which means it contains multiple packages. To build all the projects at once, run the following command from the root of the repository:
+    This project is a Cargo workspace, which means it contains multiple packages. To build all the main projects, run the following command from the root of the repository:
     ```bash
-    cargo build --workspace
+    cargo build
     ```
+    This command builds the `default-members` of the workspace, which are the projects located in the `src/projects` directory. The `rustlings` exercises are intentionally excluded from the default build because they are expected to have failing code until they are solved.
+
 
 3.  **Run a specific project:**
 

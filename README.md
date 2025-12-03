@@ -38,9 +38,9 @@ This repository also includes the `rustlings` exercises. You can work on them di
 
 To start the exercises, run the following convenient command from the root of your project:
 ```bash
-cargo run -p rustlings
+cargo rustlings
 ```
-This command will build and run the `rustlings` program. The source code has been modified to automatically find the `exercises` directory, so you can run it from anywhere in your project.
+This command is a Cargo alias defined in `.cargo/config.toml` that will build and run the `rustlings` program.
 
 Your progress on the exercises will be saved in the `src/rustlings/exercises` directory. By committing these changes to your repository, you ensure that anyone who clones it will have your exact progress.
 

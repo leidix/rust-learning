@@ -1,0 +1,16 @@
+services:
+  client-debian:
+    container_name: devcontainer-rust-book
+    # Load runtime environment vars from .devcontainer/.env
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+      args:
+        BASE_IMAGE: "debian"
+        BASE_TAG: "trixie-slim"
+    volumes:
+      - ..:/home/vscode/workspace
+    working_dir: /home/vscode/workspace
+    tty: true
+    stdin_open: true
+    restart: unless-stopped

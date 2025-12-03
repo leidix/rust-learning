@@ -4,10 +4,11 @@ FROM ${BASE_IMAGE}:${BASE_TAG}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install essentials
+# Install essentials as root
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        make \
         curl \
         ca-certificates \
         git \
@@ -18,21 +19,34 @@ RUN apt-get update \
         g++ \
         python3 \
         python3-pip \
+        bash \
         zsh \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root 'vscode' user to match common devcontainer behavior
+# Create a non-root 'vscode' user early and give sudo (no password)
 RUN useradd -m -s /bin/zsh vscode \
     && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode
 
+# Install `just` using bash (ensure script runs under bash) and add zsh completions
+RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin \
+    && mkdir -p /etc/zsh \
+    && touch /etc/zsh/zshrc || true \
+    && just --completions zsh >> /etc/zsh/zshrc
+
+# Install oh-my-zsh for the 'vscode' user by cloning the repo and copying the template zshrc
+RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /home/vscode/.oh-my-zsh \
+    && cp /home/vscode/.oh-my-zsh/templates/zshrc.zsh-template /home/vscode/.zshrc \
+    && chown -R vscode:vscode /home/vscode/.oh-my-zsh /home/vscode/.zshrc
+
+# Switch to the non-root user for user-local installs
 USER vscode
 
-# Install oh-my-zsh (unattended)
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-# Install rustup (non-interactive)
-RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+# Install rustup (non-interactive) as the vscode user
+RUN curl -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh \
+    && chmod +x /tmp/rustup-init.sh \
+    && /bin/bash /tmp/rustup-init.sh -y --no-modify-path \
+    && rm /tmp/rustup-init.sh
 ENV PATH="/home/vscode/.cargo/bin:${PATH}"
 
 WORKDIR /home/vscode/workspace

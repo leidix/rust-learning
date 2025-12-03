@@ -1,0 +1,37 @@
+ARG BASE_IMAGE
+ARG BASE_TAG
+FROM ${BASE_IMAGE}:${BASE_TAG}
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install essentials
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        ca-certificates \
+        git \
+        lldb \
+        pkg-config \
+        libssl-dev \
+        gcc \
+        g++ \
+        python3 \
+        python3-pip \
+        sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install rustup (non-interactive)
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Create a non-root 'vscode' user to match common devcontainer behavior
+RUN useradd -m vscode \
+    && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode \
+    && mkdir -p /home/vscode/.cargo /home/vscode/.rustup \
+    && chown -R vscode:vscode /home/vscode
+
+USER vscode
+WORKDIR /workspace
+
+CMD ["/bin/bash"]

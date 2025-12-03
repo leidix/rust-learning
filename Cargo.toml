@@ -1,8 +1,6 @@
 [workspace]
 members = [
-    "src/projects/hello_cargo",
-    "src/projects/hellow_world",
-    "rustlings",
+    "src/projects/*",
 ]
 default-members = [
     "src/projects/hello_cargo",

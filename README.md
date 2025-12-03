@@ -36,11 +36,13 @@ To get started with this project, you'll need to have [Rust](https://www.rust-la
 
 This repository also includes the `rustlings` exercises. You can work on them directly from this workspace without needing to install `rustlings` separately.
 
-To start the exercises, run the following command from the root of the repository:
+To start the exercises, run the following command from the root of your project:
 ```bash
-cargo run -p rustlings
+cd src/rustlings && cargo run
 ```
-This will build and run the `rustlings` program, which will automatically check your exercise files as you save them.
+This command navigates into the `src/rustlings` directory and then starts the program. This is necessary because the `rustlings` executable expects to be run from the same directory where its `exercises` folder is located.
+
+Your progress on the exercises will be saved in the `src/rustlings/exercises` directory. By committing these changes to your repository, you ensure that anyone who clones it will have your exact progress.
 
 ## Directory Structure
 

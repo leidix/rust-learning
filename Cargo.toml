@@ -3,6 +3,10 @@ members = [
     "src/projects/*",
     "src/rustlings",
 ]
+exclude = [
+    "src/rustlings/dev",
+    "src/rustlings/tests/test_exercises",
+]
 default-members = [
     "src/projects/*",
 ]

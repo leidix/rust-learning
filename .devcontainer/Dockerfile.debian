@@ -1,54 +1,82 @@
+# ---- Base Stage ----
+# Common setup, user creation, and installation of essential packages
+# that are needed in both builder and final stages.
 ARG BASE_IMAGE
 ARG BASE_TAG
-FROM ${BASE_IMAGE}:${BASE_TAG}
+FROM ${BASE_IMAGE}:${BASE_TAG} AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
+# Non-root user arguments
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
 
-# Install essentials as root
+# Install essential packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential \
-        make \
-        curl \
-        ca-certificates \
         git \
         lldb \
+        python3 \
+        python3-pip \
+        zsh \
+        fzf \
+        sudo \
+        curl \
+        ca-certificates \
+        build-essential \
+        make \
         pkg-config \
         libssl-dev \
         gcc \
         g++ \
-        python3 \
-        python3-pip \
         bash \
-        zsh \
-        fzf \
-        sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root 'vscode' user early and give sudo (no password)
-RUN useradd -m -s /bin/zsh vscode \
-    && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode
+# Create non-root user and grant sudo access
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/zsh $USERNAME \
+    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Install `just` using bash (ensure script runs under bash) and add zsh completions to a standard fpath location
-RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin \
+
+# ---- Builder Stage ----
+# Used to build/install tools like 'just' and 'rustup'.
+# Changes here are less frequent than user-level config.
+FROM base AS builder
+
+ARG USERNAME=vscode
+
+# Install 'just' and its zsh completions
+RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin \
     && mkdir -p /usr/local/share/zsh/site-functions \
     && just --completions zsh > /usr/local/share/zsh/site-functions/_just
 
-# Install oh-my-zsh for the 'vscode' user by cloning the repo and copying the template zshrc
-RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /home/vscode/.oh-my-zsh \
-    && cp /home/vscode/.oh-my-zsh/templates/zshrc.zsh-template /home/vscode/.zshrc \
-    && chown -R vscode:vscode /home/vscode/.oh-my-zsh /home/vscode/.zshrc
+# Install 'rustup' as the non-root user
+USER $USERNAME
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
 
-# Switch to the non-root user for user-local installs
-USER vscode
 
-# Install rustup (non-interactive) as the vscode user
-RUN curl -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh \
-    && chmod +x /tmp/rustup-init.sh \
-    && /bin/bash /tmp/rustup-init.sh -y --no-modify-path \
-    && rm /tmp/rustup-init.sh
-ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+# ---- Final Stage ----
+# Assemble the final image by copying artifacts from the builder
+# and applying user-specific configuration.
+FROM base AS final
 
-WORKDIR /home/vscode/workspace
+ARG USERNAME=vscode
 
+# Copy 'just' binary and completions from builder stage
+COPY --from=builder /usr/local/bin/just /usr/local/bin/just
+COPY --from=builder /usr/local/share/zsh/site-functions/_just /usr/local/share/zsh/site-functions/_just
+
+# Copy 'rustup' and '.cargo' directories from builder stage
+COPY --from=builder --chown=$USERNAME:$USERNAME /home/$USERNAME/.rustup /home/$USERNAME/.rustup
+COPY --from=builder --chown=$USERNAME:$USERNAME /home/$USERNAME/.cargo /home/$USERNAME/.cargo
+
+# Install oh-my-zsh for the non-root user
+USER $USERNAME
+RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /home/$USERNAME/.oh-my-zsh \
+    && cp /home/$USERNAME/.oh-my-zsh/templates/zshrc.zsh-template /home/$USERNAME/.zshrc
+
+# Set final environment, workdir, and default command
+ENV PATH="/home/${USERNAME}/.cargo/bin:${PATH}"
+WORKDIR /home/$USERNAME/workspace
 CMD ["/bin/zsh"]

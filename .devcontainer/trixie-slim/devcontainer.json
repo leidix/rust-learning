@@ -12,11 +12,29 @@
 
 	"remoteUser": "vscode",
 
-    // Note: postCreateCommand will not work when using a vscode workspace file
+	// Note: postCreateCommand will not work when using a vscode workspace file
 	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/home/vscode/workspace,type=bind",
 	"workspaceFolder": "/home/vscode/workspace/rust-book/.vscode/rust-book.code-workspace",
 
 	"containerEnv": {
 		"SHELL": "/bin/zsh"
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"vadimcn.vscode-lldb",
+				"serayuzgur.crates",
+				"ms-python.python",
+				"charliermarsh.ruff",
+				"ms-azuretools.vscode-docker",
+				"ms-azuretools.vscode-containers",
+				"ms-vscode-remote.remote-containers",
+				"yzhang.markdown-all-in-one",
+				"tamasfe.even-better-toml"
+			]
+		}
 	}
+
 }

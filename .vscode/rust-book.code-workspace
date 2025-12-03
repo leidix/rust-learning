@@ -8,7 +8,12 @@
 		"recommendations": [
 			"rust-lang.rust-analyzer",
 			"vadimcn.vscode-lldb",
-			"serayuzgur.crates"
+			"serayuzgur.crates",
+			"ms-python.python",
+			"charliermarsh.ruff",
+			"ms-azuretools.vscode-docker",
+			"yzhang.markdown-all-in-one",
+			"tamasfe.even-better-toml"
 		]
 	},
 	"launch": {
@@ -53,5 +58,13 @@
 			}
 		]
 	},
-	"settings": {}
+	"settings": {
+		"makefile.configureOnOpen": false,
+		"git.openRepositoryInParentFolders": "always",
+		"files.associations": {
+			"string": "cpp",
+			"stdexcept": "cpp"
+		},
+		"rust-analyzer.cargo.allTargets": true,
+	}
 }

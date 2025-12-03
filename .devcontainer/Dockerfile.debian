@@ -18,20 +18,23 @@ RUN apt-get update \
         g++ \
         python3 \
         python3-pip \
+        zsh \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Install rustup (non-interactive)
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
-ENV PATH="/root/.cargo/bin:${PATH}"
-
 # Create a non-root 'vscode' user to match common devcontainer behavior
-RUN useradd -m vscode \
-    && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode \
-    && mkdir -p /home/vscode/.cargo /home/vscode/.rustup \
-    && chown -R vscode:vscode /home/vscode
+RUN useradd -m -s /bin/zsh vscode \
+    && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode
 
 USER vscode
+
+# Install oh-my-zsh (unattended)
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install rustup (non-interactive)
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+
 WORKDIR /workspace
 
-CMD ["/bin/bash"]
+CMD ["/bin/zsh"]

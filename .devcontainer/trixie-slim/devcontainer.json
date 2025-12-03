@@ -12,12 +12,11 @@
 
 	"remoteUser": "vscode",
 
-	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/app,type=bind",
-	"workspaceFolder": "/app/backend/.vscode/backend.code-workspace",
-
-	"postCreateCommand": "rustup --version || true",
+    // Note: postCreateCommand will not work when using a vscode workspace file
+	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/home/vscode/workspace,type=bind",
+	"workspaceFolder": "/home/vscode/workspace/rust-book/.vscode/rust-book.code-workspace",
 
 	"containerEnv": {
-		"SHELL": "/bin/bash"
+		"SHELL": "/bin/zsh"
 	}
 }

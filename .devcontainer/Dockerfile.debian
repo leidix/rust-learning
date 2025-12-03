@@ -21,6 +21,7 @@ RUN apt-get update \
         python3-pip \
         bash \
         zsh \
+        fzf \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,11 +29,10 @@ RUN apt-get update \
 RUN useradd -m -s /bin/zsh vscode \
     && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode
 
-# Install `just` using bash (ensure script runs under bash) and add zsh completions
+# Install `just` using bash (ensure script runs under bash) and add zsh completions to a standard fpath location
 RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin \
-    && mkdir -p /etc/zsh \
-    && touch /etc/zsh/zshrc || true \
-    && just --completions zsh >> /etc/zsh/zshrc
+    && mkdir -p /usr/local/share/zsh/site-functions \
+    && just --completions zsh > /usr/local/share/zsh/site-functions/_just
 
 # Install oh-my-zsh for the 'vscode' user by cloning the repo and copying the template zshrc
 RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /home/vscode/.oh-my-zsh \

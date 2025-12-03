@@ -13,5 +13,4 @@ resolver = "2"
 
 [dependencies]
 rand = "0.8.5"
-rustlings = "6.5.0"
 trpl = "0.2.0"

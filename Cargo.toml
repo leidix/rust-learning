@@ -1,10 +1,10 @@
 [workspace]
 members = [
     "src/projects/*",
+    "src/rustlings",
 ]
 default-members = [
-    "src/projects/hello_cargo",
-    "src/projects/hello_world",
+    "src/projects/*",
 ]
 resolver = "2"
 

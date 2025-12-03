@@ -1,0 +1,26 @@
+[package]
+name = "rustlings-macros"
+description = "A macros crate intended to be used only by Rustlings"
+version = "6.5.0"
+authors = [
+  "Mo Bitar <mo8it@proton.me>", # https://github.com/mo8it
+  "Liv <mokou@fastmail.com>", # https://github.com/shadows-withal
+  # Alumni
+  "Carol (Nichols || Goulding) <carol.nichols@gmail.com>", # https://github.com/carols10cents
+]
+repository = "https://github.com/rust-lang/rustlings"
+license = "MIT"
+edition = "2024"
+rust-version = "1.88"
+include = [
+  "/src/",
+  "/info.toml",
+]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+toml = { version = "0.9", default-features = false, features = ["std", "parse", "serde"] }

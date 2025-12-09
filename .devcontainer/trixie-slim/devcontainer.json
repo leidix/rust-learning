@@ -1,23 +1,34 @@
 {
 
-	"name": "compose::rust-book-devcontainer::client-debian",
+	"name": "compose::rust-book-devcontainer::debian-trixie-slim",
 
 	"dockerComposeFile": "../docker-compose.yml",
-	"service": "client-debian",
+	"service": "debian-trixie-slim",
 	"shutdownAction": "stopCompose",
 
-	"remoteUser": "vscode",
-
 	// Note: postCreateCommand will not work when using a vscode workspace file
-	"workspaceFolder": "/home/vscode/workspace/.vscode/rust-book.code-workspace",
+	"workspaceFolder": "/home/${localEnv:USER}/workspace/rust-book/.vscode/rust-book.code-workspace",
 
-	"containerEnv": {
-		"SHELL": "/bin/zsh"
-	},
+	"remoteUser": "${localEnv:USER}",
 
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers-extra/features/act:1": {}
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"installOhMyZsh": true,
+			"upgradePackages": true,
+			"username": "automatic",
+			"uid": "automatic",
+			"gid": "automatic"
+		},
+		"ghcr.io/devcontainers/features/rust:1": {
+			"components": [
+				"clippy",
+				"rust-src",
+				"rustfmt"
+			]
+		}
 	},
 
 	"customizations": {
